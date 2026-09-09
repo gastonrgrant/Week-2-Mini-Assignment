@@ -123,3 +123,18 @@ scikit-learn
 - `First_Data_Analysis.py`: Python data analysis script
 - `archive/cbb.csv`: college basketball dataset
 - `README.md`: project documentation
+
+
+## Rust Jupyter Notebook
+
+The repository also includes the modified `rust_vs_python_intro.ipynb` notebook. The notebook introduces Rust programming and compares some Rust concepts with Python.
+
+The ownership experiments demonstrate:
+
+- immutable and mutable variables using `let` and `let mut`;
+- ownership transfer when assigning a `String` or vector to another variable;
+- cloning a value with `.clone()` so both variables can own separate copies;
+- borrowing values with `&` instead of transferring ownership;
+- Rust's compiler errors when a value is used after ownership has moved or when it is modified while borrowed.
+
+The notebook was run using the Rust Jupyter kernel. Some cells are intentionally designed to produce ownership errors so that Rust's ownership and borrowing rules can be observed.
