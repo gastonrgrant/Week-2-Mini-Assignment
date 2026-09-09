@@ -124,13 +124,14 @@ print(f"\nMean Squared Error: {mean_squared_error(y_test, y_prediction)}")
 print(f"\nR-squared: {r2_score(y_test, y_prediction)}")
 
 
-# Plot Adjusted Tempo (ADJ_T) vs. Winning Percentage (WIN_PCT)
-# Do teams that play with a faster or slower tempo tend to win more games?
+# Plot actual versus predicted winning percentages
+plt.scatter(y_test, y_prediction)
 
-plt.scatter(cbb["ADJ_T"], cbb["WIN_PCT"])
+plt.xlabel("Actual Winning Percentage")
+plt.ylabel("Predicted Winning Percentage")
+plt.title("Actual vs. Predicted Winning Percentage")
 
-plt.xlabel("Adjusted Tempo (ADJ_T)")
-plt.ylabel("Winning Percentage (WIN_PCT)")
-plt.title("Adjusted Tempo vs Winning Percentage")
+# Add a perfect-prediction reference line
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], color="red")
 
 plt.show()
