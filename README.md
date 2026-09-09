@@ -138,3 +138,24 @@ The ownership experiments demonstrate:
 - Rust's compiler errors when a value is used after ownership has moved or when it is modified while borrowed.
 
 The notebook was run using the Rust Jupyter kernel. Some cells are intentionally designed to produce ownership errors so that Rust's ownership and borrowing rules can be observed.
+
+## Polars Analysis
+
+In addition to Pandas, this project uses Polars to repeat a data-grouping operation. Polars is another DataFrame library designed to process data efficiently, especially when working with larger datasets.
+
+The same college basketball CSV file was loaded with Polars. Polars was used to group teams by `YEAR` and calculate the mean offensive effective field-goal percentage (`EFG_O`) for each season. This is equivalent to the Pandas grouping operation used earlier in the script. The Polars results were then sorted by `YEAR` so that the seasons appeared chronologically.
+
+## Pandas and Polars Runtime Comparison
+
+The runtime comparison measured how long Pandas and Polars took to group the data by `YEAR` and calculate the mean of `EFG_O`. Timing began immediately before each grouping operation and ended immediately afterward, so it measured the operations themselves rather than package installation or dataset loading.
+
+In one measured run, the results were:
+
+| Library | Runtime |
+|---|---:|
+| Pandas | 0.000926 seconds |
+| Polars | 0.001295 seconds |
+
+Pandas was slightly faster in this run. However, the difference was only about 0.000369 seconds, or less than half a millisecond. Because this dataset contains only about 4,249 rows and the operation is simple, both libraries completed the task almost immediately.
+
+This result does not mean that Pandas is always faster. Polars is designed to provide larger performance benefits with larger datasets or more complicated operations. For this particular small dataset and operation, the runtime difference was too small to have practical significance.

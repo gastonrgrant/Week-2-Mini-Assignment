@@ -4,10 +4,12 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+import polars as pl
+import time
 
-# Load the datasets
+# Load the datasets in pandas and polars
 cbb = pd.read_csv("archive/cbb.csv")
-
+cbb_polars = pl.read_csv("archive/cbb.csv")
 
 # Inspect the data set
 
@@ -135,3 +137,51 @@ plt.title("Actual vs. Predicted Winning Percentage")
 plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], color="red")
 
 plt.show()
+
+
+# Polars Performance Comparison
+
+print("\nPolars DataFrame Head:")
+print(cbb_polars.head())
+
+# Filter teams with 20 wins in Polars
+polars_twenty_win_teams = cbb_polars.filter(pl.col("W") >= 20)
+
+print("\nPolars Twenty-win teams:")
+print(polars_twenty_win_teams.head())
+
+# Calculate average 3 Point Shooting Percentage in Polars
+
+polars_avg_3p_pct_allyears = cbb_polars.select(pl.col("3P_O").mean().alias("avg_3P_O"))
+print(
+    f"\nPolars Average 3 Point Shooting Percentage across all years:\n{polars_avg_3p_pct_allyears}"
+)
+
+# Calculate average Offensive Effective Field Goal Percentage by Year in Polars
+polars_avg_efg_o_by_year = (
+    cbb_polars.group_by("YEAR")
+    .agg(pl.col("EFG_O").mean().alias("avg_EFG_O"))
+    .sort("YEAR")
+)
+print(
+    f"\nPolars Average Effective Field Goal Percentage by Year (Offensive):\n{polars_avg_efg_o_by_year}"
+)
+
+# Calculate the Pandas runtime
+
+pandas_start = time.perf_counter()
+
+pandas_avg_efg_o_by_year = cbb.groupby("YEAR")["EFG_O"].mean()
+
+pandas_runtime = time.perf_counter() - pandas_start
+print(f"Pandas runtime: {pandas_runtime}")
+# Calculate Polars runtime
+
+polars_start = time.perf_counter()
+polars_avg_efg_o_by_year = (
+    cbb_polars.group_by("YEAR")
+    .agg(pl.col("EFG_O").mean().alias("avg_EFG_O"))
+    .sort("YEAR")
+)
+polars_runtime = time.perf_counter() - polars_start
+print(f"Polars runtime: {polars_runtime}")
