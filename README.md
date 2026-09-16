@@ -8,7 +8,8 @@ The analysis includes importing and inspecting the data, checking for missing va
 
 ## Research Question
 
-Our machine learning analysis in this project focuses on answering the research question "How well do Dean Oliver's Four Factors of Basketball explain winning percentage in college basketball?"
+Our machine learning analysis in this project focuses on answering the research question:
+"How well do Dean Oliver's Four Factors of Basketball explain winning percentage in college basketball?"
 
 ## Dataset
 
