@@ -6,6 +6,8 @@ This project performs a beginner-level analysis of Division I college basketball
 
 The analysis includes importing and inspecting the data, checking for missing values and duplicates, filtering meaningful subsets, calculating summary statistics with `groupby()`, creating a visualization, and exploring a linear regression model.
 
+## Research Question
+
 Our machine learning analysis in this project focuses on answering the research question "How well do Dean Oliver's Four Factors of Basketball explain winning percentage in college basketball?"
 
 ## Dataset
