@@ -93,7 +93,7 @@ print(
 
 # Make x values the four factors and y values the winning percentage
 
-x = cbb[["EFG_O", "TOR", "ORB", "FTR"]]
+x = cbb[["EFG_O", "TOR", "ORB", "FTR", "DRB", "TORD", "EFG_D", "FTRD"]]
 
 # Create a new column for winning percentage
 cbb["WIN_PCT"] = cbb["W"] / (cbb["G"])
@@ -123,7 +123,7 @@ for stat, slope in zip(x.columns, ml_model.coef_):
 print(f"\nY Intercept (b): {ml_model.intercept_}")
 print(f"\nMean Absolute Error: {mean_absolute_error(y_test, y_prediction)}")
 print(f"\nMean Squared Error: {mean_squared_error(y_test, y_prediction)}")
-print(f"\nR-squared: {r2_score(y_test, y_prediction)}")
+print(f"\nR-squared: {r2_score(y_test, y_prediction)}\n")
 
 
 # Plot actual versus predicted winning percentages
@@ -138,6 +138,31 @@ plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], color="red"
 
 plt.show()
 
+
+# Top Predicted Teams for Each Year
+
+cbb["PREDICTED_WIN_PCT"] = ml_model.predict(x)
+
+top_teams = (
+    cbb.sort_values(
+        ["YEAR", "PREDICTED_WIN_PCT"],
+        ascending=[True, False]
+    )
+    .groupby("YEAR")
+    .head(5)
+)
+
+top_teams["RANK"] = (
+    top_teams.groupby("YEAR").cumcount() + 1
+)
+
+for year, group in top_teams.groupby("YEAR"):
+    print(f"\n{year}")
+    print(
+        group[
+            ["RANK", "TEAM", "PREDICTED_WIN_PCT"]
+        ].to_string(index=False)
+    )
 
 # Polars Performance Comparison
 
