@@ -14,7 +14,7 @@ def load_data(filepath):
 
 def add_win_percentage(data):
     # Add win percentage column
-    # Copy dataset so we do not alter our original
+    # Copy dataset so that the original is not altered
     result = data.copy()
     result["WIN_PCT"] = result["W"] / result["G"]
     return result
