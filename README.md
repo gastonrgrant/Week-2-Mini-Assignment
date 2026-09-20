@@ -62,10 +62,10 @@ The offensive and defensive statistics are examined separately because the two s
 
 ## Machine Learning: Linear Regression
 
-The script explores multiple linear regression. The model uses the offensive Four Factors as inputs:
+The model uses offensive and defensive versions of Dean Oliver's Four Factors as inputs:
 
 ```text
-EFG_O, TOR, ORB, FTR
+EFG_O, TOR, ORB, FTR, DRB, TORD, EFG_D, FTRD
 ```
 
 The outcome is winning percentage, calculated as:
@@ -123,12 +123,6 @@ matplotlib
 scikit-learn
 ```
 
-## Files
-
-- `First_Data_Analysis.py`: Python data analysis script
-- `archive/cbb.csv`: college basketball dataset
-- `README.md`: project documentation
-
 
 ## Rust Jupyter Notebook
 
@@ -164,3 +158,35 @@ In one measured run, the results were:
 Pandas was slightly faster in this run. However, the difference was only about 0.000369 seconds, or less than half a millisecond. Because this dataset contains only about 4,249 rows and the operation is simple, both libraries completed the task almost immediately.
 
 This result does not mean that Pandas is always faster. Polars is designed to provide larger performance benefits with larger datasets or more complicated operations. For this particular small dataset and operation, the runtime difference was too small to have practical significance.
+
+## Testing and Reproducibility
+
+This project includes automated tests using pytest. The tests validate the main components of the analysis:
+
+- Loading the basketball dataset
+- Calculating winning percentage
+- Training and evaluating the linear regression model
+- Generating the top predicted teams by year
+
+The project contains four tests, including a system/integration test that checks the workflow from model training through top-team prediction.
+
+To run the tests locally:
+
+```bash
+python -m pytest -q
+```
+All four tests pass successfully.
+
+![Tests](https://github.com/gastongrant/Week-2-Mini-Assignment/actions/workflows/tests.yml/badge.svg)
+
+
+## Files
+
+- `First_Data_Analysis.py`: Main Python data analysis script
+- `cbb_analysis.py`: Reusable functions used for testing
+- `tests/test_cbb_analysis.py`: Unit and integration tests
+- `.github/workflows/tests.yml`: GitHub Actions workflow
+- `.gitignore`: Files excluded from Git tracking
+- `archive/cbb.csv`: College basketball dataset
+- `Figure_1.png`: Actual versus predicted winning-percentage plot
+- `README.md`: Project documentation
