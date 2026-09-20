@@ -177,7 +177,7 @@ python -m pytest -q
 ```
 All four tests pass successfully.
 
-![Tests](https://github.com/gastongrant/Week-2-Mini-Assignment/actions/workflows/tests.yml/badge.svg?branch=main)
+[![Run Tests](https://github.com/gastonrgrant/Week-2-Mini-Assignment/actions/workflows/tests.yml/badge.svg)](https://github.com/gastonrgrant/Week-2-Mini-Assignment/actions/workflows/tests.yml)
 
 ## Files
 
