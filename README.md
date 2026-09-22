@@ -179,6 +179,9 @@ All four tests pass successfully.
 
 [![Run Tests](https://github.com/gastonrgrant/Week-2-Mini-Assignment/actions/workflows/tests.yml/badge.svg)](https://github.com/gastonrgrant/Week-2-Mini-Assignment/actions/workflows/tests.yml)
 
+<img width="1316" height="720" alt="Screenshot 2026-09-20 at 4 05 38 PM" src="https://github.com/user-attachments/assets/0c3f42ae-f255-4c50-b068-3e3e697d9620" />
+
+
 ## Files
 
 - `First_Data_Analysis.py`: Main Python data analysis script
