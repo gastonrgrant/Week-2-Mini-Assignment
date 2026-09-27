@@ -143,7 +143,13 @@ docker run --rm cbb-analysis
 
 `docker images` lists the built image. `docker ps` shows containers that are still running. This container exits when the analysis is done, so it will not stay in that list.
 
-Add a resized screenshot of the image build and the running container here.
+The build finishes by naming the image `cbb-analysis`:
+
+![Docker image build](images/docker-build.png)
+
+The container then prints the model results, including the two removed rows and the R-squared:
+
+![Docker container results](images/docker-run.png)
 
 ## Refactoring
 
@@ -214,4 +220,6 @@ GitHub Actions runs those tests, plus `black --check` and `flake8`, on Python 3.
 - `.gitignore`: Files excluded from Git tracking
 - `archive/cbb.csv`: College basketball dataset
 - `Figure_1.png`: Actual versus predicted winning-percentage plot
+- `images/docker-build.png`: Screenshot of the Docker image build
+- `images/docker-run.png`: Screenshot of the container results
 - `README.md`: Project documentation
