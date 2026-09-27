@@ -1,6 +1,6 @@
 # College Basketball Data Analysis
 
-## Overview
+## Overview of Project
 
 This project performs a beginner-level analysis of Division I college basketball data using Python, Pandas, Matplotlib, and scikit-learn. The dataset contains team-level statistics from the 2013–2019 and 2021–2025 seasons. The 2020 season is not included because the NCAA Tournament was canceled that year due to COVID-19.
 
@@ -86,7 +86,7 @@ For the current run, the model produced:
 - Mean squared error: approximately `0.0134`. Lower values indicate smaller prediction errors.
 - R-squared: approximately `0.589`, meaning the Four Factors explained about 58.9% of the variation in winning percentage in the test data.
 
-These results indicate a meaningful relationship between the offensive Four Factors and winning percentage; In further models, the defensive sides of the Four Factors can be evaulated as well to help further explain winning percentage. These Four Factors, however, do not prove that any individual factor causes teams to win. The model does not include every influence on winning, such as defensive performance, strength of schedule, injuries, or coaching.
+These results indicate a meaningful relationship between the offensive Four Factors and winning percentage. In further models, the defensive sides of the Four Factors can be evaluated as well to help further explain winning percentage. These Four Factors, however, do not prove that any individual factor causes teams to win. The model does not include every influence on winning, such as defensive performance, strength of schedule, injuries, or coaching.
 
 ## Visualization
 
