@@ -1,7 +1,9 @@
 import pandas as pd
+import pytest
 
 from cbb_analysis import (
     add_win_percentage,
+    clean_team_data,
     get_top_teams_by_year,
     load_data,
     train_winning_percentage_model,
@@ -47,8 +49,8 @@ def test_model_trains_and_returns_metrics():
     assert "mae" in metrics
     assert "mse" in metrics
     assert "r2" in metrics
-    # mae cannot be negative
     assert metrics["mae"] >= 0
+    assert len(model.coef_) == 8
 
 
 def test_top_teams_returns_correct_number_per_year():
@@ -56,18 +58,15 @@ def test_top_teams_returns_correct_number_per_year():
 
     model, _, _, _ = train_winning_percentage_model(data)
     result = get_top_teams_by_year(data, model, number_of_teams=1)
-    #make sure each year has a predicted top team
+
     assert len(result) == data["YEAR"].nunique()
-    # check that the number of teams for each year is one
     assert result.groupby("YEAR").size().max() == 1
     assert "RANK" in result.columns
-    # asser that the top team is ranked 1
     assert result["RANK"].eq(1).all()
 
 
 def test_load_data(tmp_path):
     data = make_test_data()
-    #use tmp_path so pytest will automatically create a test folder
     filepath = tmp_path / "test_cbb.csv"
     data.to_csv(filepath, index=False)
 
@@ -75,3 +74,51 @@ def test_load_data(tmp_path):
 
     assert len(loaded_data) == len(data)
     assert list(loaded_data.columns) == list(data.columns)
+
+
+def test_clean_team_data_drops_zero_games():
+    data = make_test_data()
+    data.loc[0, "G"] = 0
+
+    cleaned = clean_team_data(data)
+
+    assert len(cleaned) == len(data) - 1
+    assert "A" not in cleaned["TEAM"].tolist()
+    assert (cleaned["G"] > 0).all()
+
+
+def test_add_win_percentage_rejects_zero_games():
+    data = make_test_data()
+    data.loc[0, "G"] = 0
+
+    with pytest.raises(ValueError):
+        add_win_percentage(data)
+
+
+def test_clean_team_data_drops_wins_above_games():
+    data = make_test_data()
+    data.loc[0, "W"] = 31
+
+    cleaned = clean_team_data(data)
+
+    assert len(cleaned) == len(data) - 1
+    assert "A" not in cleaned["TEAM"].tolist()
+    assert (cleaned["W"] <= cleaned["G"]).all()
+
+
+def test_missing_feature_column_raises():
+    data = add_win_percentage(make_test_data()).drop(columns=["TOR"])
+
+    with pytest.raises(KeyError):
+        train_winning_percentage_model(data)
+
+
+def test_top_teams_when_request_exceeds_teams_in_a_year():
+    data = add_win_percentage(make_test_data())
+    model, _, _, _ = train_winning_percentage_model(data)
+
+    result = get_top_teams_by_year(data, model, number_of_teams=10)
+
+    assert len(result) == len(data)
+    assert result.groupby("YEAR").size().max() == 2
+    assert set(result["RANK"]).issubset({1, 2})
