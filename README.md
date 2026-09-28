@@ -159,7 +159,11 @@ That change matters because the tests import `cbb_analysis.py`. If the script ke
 
 The project was checked by running `python -m pytest -q` and by running `python First_Data_Analysis.py`, which rewrote `Figure_1.png` and printed the same metrics described above. `black` formatted the Python files, and `flake8` reported no issues.
 
-Add a screenshot of the GitHub commit diff for this refactor here.
+The GitHub diff for that commit shows the old script in red and the new `main()` in green:
+
+![Refactor diff, start of First_Data_Analysis.py](images/refactor-diff-before.png)
+
+![Refactor diff, model code replaced by main](images/refactor-diff-after.png)
 
 ## Polars Analysis
 
@@ -222,4 +226,6 @@ GitHub Actions runs those tests, plus `black --check` and `flake8`, on Python 3.
 - `Figure_1.png`: Actual versus predicted winning-percentage plot
 - `images/docker-build.png`: Screenshot of the Docker image build
 - `images/docker-run.png`: Screenshot of the container results
+- `images/refactor-diff-before.png`: Screenshot of the refactor diff, start of the script
+- `images/refactor-diff-after.png`: Screenshot of the refactor diff, model code replaced by `main()`
 - `README.md`: Project documentation
