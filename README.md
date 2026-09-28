@@ -2,20 +2,21 @@
 
 ## Overview of Project
 
-This project performs a beginner-level analysis of Division I college basketball data using Python, Pandas, Matplotlib, and scikit-learn. The dataset contains team-level statistics from the 2013–2019 and 2021–2025 seasons. The 2020 season is not included because the NCAA Tournament was canceled that year due to COVID-19.
+This project is a beginner-level analysis of Division I college basketball data using Python, Pandas, Matplotlib, and scikit-learn. The dataset has team stats from the 2013–2019 and 2021–2025 seasons. The 2020 season is missing because the NCAA Tournament was canceled that year due to COVID-19.
 
-The analysis includes importing and inspecting the data, checking for missing values and duplicates, filtering meaningful subsets, calculating summary statistics with `groupby()`, creating a visualization, and exploring a linear regression model.
+The script loads and inspects the data, checks for missing values and duplicates, filters a couple of subsets, calculates summary statistics with `groupby()`, makes a plot, and fits a linear regression model.
 
 ## Research Question
 
-Our machine learning analysis in this project focuses on answering the research question:
+The machine learning part of the project tries to answer this question:
+
 "How well do Dean Oliver's Four Factors of Basketball explain winning percentage in college basketball?"
 
-Dean Oliver's four factors are effective field-goal percentage, turnover rate, rebounding rate, and free-throw rate. Each factor is measured on offense and on defense, so the model uses eight inputs. Defense is part of the Four Factors, not a separate question.
+Dean Oliver's four factors are effective field-goal percentage, turnover rate, rebounding, and free-throw rate. Each one is tracked on offense and on defense, so there are eight inputs, not four. Defense is already part of the Four Factors.
 
 ## Dataset
 
-The dataset is from Kaggle and was scraped from Bart Torvik's college basketball rankings. It includes team performance, conference, efficiency, shooting, rebounding, turnover, free-throw, postseason, seed, and season information.
+The dataset is from Kaggle and was scraped from Bart Torvik's college basketball rankings. It includes team performance, conference, efficiency, shooting, rebounding, turnovers, free throws, postseason result, seed, and season.
 
 The dataset can be downloaded here: https://www.kaggle.com/datasets/andrewsundberg/college-basketball-dataset?resource=download
 
@@ -25,72 +26,72 @@ Important variables include:
 - `ADJOE`: adjusted offensive efficiency
 - `ADJDE`: adjusted defensive efficiency
 - `EFG_O` and `EFG_D`: offensive and defensive effective field-goal percentage
-- `TOR` and `TORD`: turnovers committed and turnovers generated
-- `ORB` and `DRB`: offensive rebounding and defensive rebounding rates
+- `TOR` and `TORD`: turnovers committed and turnovers forced
+- `ORB` and `DRB`: offensive and defensive rebounding rates
 - `FTR` and `FTRD`: offensive and defensive free-throw rates
 - `3P_O`: offensive three-point shooting percentage
 - `ADJ_T`: adjusted tempo
-- `POSTSEASON` and `SEED`: tournament outcome and seed
+- `POSTSEASON` and `SEED`: tournament result and seed
 
 ## Analysis
 
 ### Data inspection
 
-The script uses `head()` to display the first 50 rows, `info()` to inspect the columns and data types, and `describe()` to view numerical summary statistics. It also uses `isnull().sum()` to count missing values in each column and across the entire dataset, and `duplicated().sum()` to check for exact duplicate rows.
+The script uses `head()` to show the first 50 rows, `info()` to look at the columns and data types, and `describe()` for the numeric summary. It also uses `isnull().sum()` to count missing values in each column and in the whole file, and `duplicated().sum()` to check for exact duplicate rows.
 
-Missing values are expected in `POSTSEASON` and `SEED` because most teams do not reach the NCAA Tournament. In this file, both columns are missing for 3,433 of 4,249 team-seasons. These missing values are not automatically errors; they indicate that a team did not receive a postseason result or tournament seed.
+Missing values in `POSTSEASON` and `SEED` are expected. Most teams do not make the NCAA Tournament. In this file, both columns are missing for 3,433 of the 4,249 team-seasons. Those blanks mean the team did not get a tournament result or a seed. They are not data-entry mistakes.
 
-There are no exact duplicate rows. Two team-seasons have more wins than games played: Southern Utah in 2021 (20 wins in 19 games) and McNeese State in 2024 (30 wins in 29 games). A winning percentage above 1 is not a real result, so those two rows are removed before the regression. Games played otherwise ranges from 5 to 40. Offensive three-point percentage ranges from about 24.7 to 44.1, which is a wide but believable college range, so those rows are kept.
+There are no exact duplicate rows. Two rows do have more wins than games: Southern Utah in 2021 (20 wins in 19 games) and McNeese State in 2024 (30 wins in 29 games). A winning percentage over 1.0 does not make sense, so those two rows are dropped before the regression. Every other team played between 5 and 40 games. Offensive three-point percentage runs from about 24.7 to 44.1, which is a wide range but still believable for college basketball, so those rows stay in.
 
 ### Filters
 
-Two meaningful subsets are created:
+The script makes two subsets:
 
-1. `twenty_win_teams` contains teams with at least 20 wins. This identifies teams that had a relatively successful regular season.
-2. `tournament_teams` contains teams with a nonmissing `POSTSEASON` value. This identifies teams that made the NCAA Tournament.
+1. `twenty_win_teams` is teams with at least 20 wins. That is a simple way to pick out teams that had a pretty good season.
+2. `tournament_teams` is teams with a `POSTSEASON` value. Those are the teams that made the NCAA Tournament.
 
-The cleaned dataset is used for the regression so that the model includes successful, average, and weaker teams rather than only a selected group.
+The regression uses the cleaned full dataset, not just those subsets, so it includes good teams, average teams, and bad teams.
 
 ### Summary statistics and grouping
 
-The script calculates the overall mean, median, and range of offensive three-point percentage (`3P_O`).
+The script finds the mean, median, and range of offensive three-point percentage (`3P_O`).
 
-Additionally, the script groups the data by `YEAR` and calculates yearly means for Dean Oliver's Four Factors on both ends of the floor (Dean Oliver is considered the father of basketball analytics, and his Four Factors are the four statistics he identified as the most impactful to winning basketball games in his 2004 book *Basketball on Paper*):
+It also groups by `YEAR` and takes the yearly average of Dean Oliver's Four Factors on both ends of the floor. Dean Oliver is usually called the father of basketball analytics. In his 2004 book *Basketball on Paper*, he argued that these four stats matter most for winning:
 
-- effective field-goal percentage, offensive and defensive;
-- turnover rate and turnovers generated;
-- offensive and defensive rebounding;
-- free-throw rate, offensive and defensive.
+- effective field-goal percentage, offense and defense
+- turnover rate and turnovers forced
+- offensive and defensive rebounding
+- free-throw rate, offense and defense
 
-The offensive and defensive statistics are examined separately because the two sides of the game measure different aspects of performance. For example, lower `TOR` is generally better because it represents turnovers committed, while higher `TORD` is generally better because it represents turnovers generated from opponents.
+Offense and defense are kept separate because they mean different things. A lower `TOR` is better, because that is turnovers your team commits. A higher `TORD` is better, because that is turnovers you force.
 
 ## Machine Learning: Linear Regression
 
-The model uses both sides of Dean Oliver's Four Factors as inputs:
+The model uses both sides of the Four Factors:
 
 ```text
 EFG_O, TOR, ORB, FTR, EFG_D, TORD, DRB, FTRD
 ```
 
-The outcome is winning percentage, calculated as:
+The outcome is winning percentage:
 
 ```text
 WIN_PCT = W / G
 ```
 
-Using winning percentage instead of raw wins makes comparisons fairer when teams play different numbers of games.
+Winning percentage is fairer than raw wins, because teams do not all play the same number of games.
 
-The data is divided into training and testing sets. Eighty percent of the rows are used to train the model, and 20% are reserved to test its predictions. `random_state=706` makes the random split reproducible, meaning the same rows are selected each time the script runs.
+The rows are split into training and testing sets. 80% is used to train the model and 20% is held out to test it. `random_state=706` keeps the split the same every time the script runs.
 
-The model is evaluated with mean absolute error, mean squared error, and R-squared. The coefficients are also printed so that the estimated relationship for each Four Factor can be examined.
+The script prints mean absolute error, mean squared error, R-squared, and the coefficient for each factor.
 
-For the current run, after the two impossible win totals were removed, the model produced:
+After dropping the two bad win totals, this run came out to:
 
-- Mean absolute error: approximately `0.059`, meaning predictions were off by about 5.9 percentage points on average.
-- Mean squared error: approximately `0.0055`. Lower values indicate smaller prediction errors.
-- R-squared: approximately `0.828`, meaning the eight Four Factors explained about 82.8% of the variation in winning percentage in the test data.
+- Mean absolute error: about `0.059`, so the predictions were off by about 5.9 percentage points on average.
+- Mean squared error: about `0.0055`. Smaller is better.
+- R-squared: about `0.828`, so the eight factors explained about 82.8% of the difference in winning percentage in the test data.
 
-Each coefficient was also checked against the direction basketball would suggest. A higher `EFG_O`, `ORB`, `FTR`, `TORD`, or `DRB` should go with a higher winning percentage. A higher `TOR`, `EFG_D`, or `FTRD` should go with a lower one.
+I also checked whether each coefficient pointed the way it should in basketball. Higher `EFG_O`, `ORB`, `FTR`, `TORD`, and `DRB` should go with a higher winning percentage. Higher `TOR`, `EFG_D`, and `FTRD` should go with a lower one.
 
 | Factor | Coefficient | Expected sign | Matches |
 |---|---:|---|---|
@@ -103,30 +104,30 @@ Each coefficient was also checked against the direction basketball would suggest
 | `EFG_D` | -0.0231 | negative | yes |
 | `FTRD` | -0.0038 | negative | yes |
 
-Seven of the eight signs match that expectation. `DRB` is the exception: its coefficient is negative even though a higher defensive rebounding rate should help a team. That does not mean defensive rebounding causes losses. All eight factors are in the model at once, so each coefficient is the leftover association after the others are already accounted for. These results show a strong relationship between the Four Factors and winning percentage. They do not prove that any individual factor causes teams to win. The model also leaves out other influences, such as strength of schedule, injuries, and coaching.
+Seven of the eight signs match. `DRB` does not. Its coefficient is negative, even though a team that rebounds better on defense should win more. I do not read that as "defensive rebounding makes you lose." All eight factors are in the model together, so the `DRB` number is what is left after the other seven are already accounted for. The fit is strong, but a coefficient is not proof that one stat causes wins. Strength of schedule, injuries, and coaching are not in the model.
 
 ## Visualization
 
 ![Actual vs. Predicted Winning Percentage](Figure_1.png)
 
-The script saves a scatterplot, `Figure_1.png`, comparing the model's predicted winning percentages with the teams' actual winning percentages in the testing dataset. Saving the figure, instead of opening a window, lets the same script finish inside a Docker container.
+The script saves `Figure_1.png` instead of opening a plot window, so the same script can finish inside Docker.
 
-The actual winning percentage appears on the x-axis, and the predicted winning percentage appears on the y-axis. Each point represents one team in the testing data.
+Actual winning percentage is on the x-axis and predicted winning percentage is on the y-axis. Each point is one team in the test set.
 
-The red diagonal line represents perfect predictions. Points on the red line would have predicted winning percentages exactly equal to their actual winning percentages. Points farther from the line represent larger prediction errors.
+The red line is a perfect prediction. A point on that line was predicted exactly right. Points farther from the line are bigger misses.
 
-This visualization helps evaluate how closely the linear regression model's predictions match the actual outcomes. The overall pattern of the points shows that the model captures a meaningful relationship between the Four Factors and winning percentage, although the predictions are not perfect.
+The points follow the line pretty well, so the Four Factors do track winning percentage, but the predictions are not exact.
 
 ## How to Run
 
-From the project folder, install the dependencies and run the script:
+From the project folder:
 
 ```bash
 python -m pip install -r requirements.txt
 python First_Data_Analysis.py
 ```
 
-The script expects the dataset at:
+The script looks for the dataset at:
 
 ```text
 archive/cbb.csv
@@ -134,32 +135,32 @@ archive/cbb.csv
 
 ## Docker
 
-The analysis can also run in a container. The Dockerfile starts from Python 3.11, installs `requirements.txt`, and copies the scripts plus `archive/cbb.csv`. Building the image packages that environment. Running the container starts the script, writes `Figure_1.png` inside the container, and exits when the script finishes.
+The same analysis can run in a container. The Dockerfile uses Python 3.11, installs `requirements.txt`, and copies the scripts and `archive/cbb.csv`. `docker build` makes the image. `docker run` starts the script, saves `Figure_1.png` inside the container, and then the container exits.
 
 ```bash
 docker build -t cbb-analysis .
 docker run --rm cbb-analysis
 ```
 
-`docker images` lists the built image. `docker ps` shows containers that are still running. This container exits when the analysis is done, so it will not stay in that list.
+`docker images` lists the image after the build. `docker ps` only shows containers that are still running. This one exits when the script is done, so it will not stay in that list.
 
-The build finishes by naming the image `cbb-analysis`:
+The build ends by naming the image `cbb-analysis`:
 
 ![Docker image build](images/docker-build.png)
 
-The container then prints the model results, including the two removed rows and the R-squared:
+The container prints the model results, including the two dropped rows and the R-squared:
 
 ![Docker container results](images/docker-run.png)
 
 ## Refactoring
 
-`First_Data_Analysis.py` used to repeat the model training, the test-set predictions, and the top-teams ranking that `cbb_analysis.py` already defined. The script now calls those functions. Cleaning invalid win totals, the yearly Four Factor means, the scatterplot, and the coefficient sign check were also moved into `cbb_analysis.py` so the script is a short `main()` instead of one long block.
+`First_Data_Analysis.py` used to train the model, make the predictions, and rank the top teams on its own, even though `cbb_analysis.py` already had those functions. The script now calls the functions. Cleaning the bad win totals, the yearly Four Factor averages, the scatterplot, and the coefficient sign check were moved into `cbb_analysis.py` too. `First_Data_Analysis.py` is now a short `main()`.
 
-That change matters because the tests import `cbb_analysis.py`. If the script kept its own copy of the model, a later edit could change one path and leave the other behind while the tests still passed.
+The tests import `cbb_analysis.py`. If the script had kept its own copy of the model, I could change one and forget the other, and the tests would still pass.
 
-The project was checked by running `python -m pytest -q` and by running `python First_Data_Analysis.py`, which rewrote `Figure_1.png` and printed the same metrics described above. `black` formatted the Python files, and `flake8` reported no issues.
+I checked it by running `python -m pytest -q` and `python First_Data_Analysis.py`. The script rewrote `Figure_1.png` and printed the same metrics as above. `black` formatted the Python files, and `flake8` did not report any problems.
 
-The GitHub diff for that commit shows the old script in red and the new `main()` in green:
+The GitHub diff shows the old script in red and the new `main()` in green:
 
 ![Refactor diff, start of First_Data_Analysis.py](images/refactor-diff-before.png)
 
@@ -167,46 +168,46 @@ The GitHub diff for that commit shows the old script in red and the new `main()`
 
 ## Polars Analysis
 
-In addition to Pandas, this project uses Polars to repeat a data-grouping operation. Polars is another DataFrame library designed to process data efficiently, especially when working with larger datasets.
+The project also uses Polars for one grouping step. Polars is another DataFrame library, and it is built to be faster on bigger data.
 
-The same college basketball CSV file was loaded with Polars. Polars was used to group teams by `YEAR` and calculate the mean offensive effective field-goal percentage (`EFG_O`) for each season. This is equivalent to the Pandas grouping operation used earlier in the script. The Polars results were then sorted by `YEAR` so that the seasons appeared chronologically.
+The same CSV was loaded in Polars. The data was grouped by `YEAR`, and the mean offensive effective field-goal percentage (`EFG_O`) was calculated for each season. That is the same grouping the Pandas code does. The Polars result is sorted by `YEAR`.
 
 ## Pandas and Polars Runtime Comparison
 
-The runtime comparison measured how long Pandas and Polars took to group the data by `YEAR` and calculate the mean of `EFG_O`. Timing began immediately before each grouping operation and ended immediately afterward, so it measured the operations themselves rather than package installation or dataset loading.
+I timed how long each library took to group by `YEAR` and average `EFG_O`. The timer starts right before the grouping and stops right after it, so this is not counting package installs or loading the CSV.
 
-In one measured run, the results were:
+One run came out to:
 
 | Library | Runtime |
 |---|---:|
 | Pandas | 0.000243 seconds |
 | Polars | 0.000588 seconds |
 
-Pandas was slightly faster in this run. The difference was less than a millisecond. Because this dataset contains only about 4,249 rows and the operation is simple, both libraries completed the task almost immediately.
+Pandas was a little faster. The gap was less than a millisecond. This file only has about 4,249 rows, and the operation is simple, so both finished basically instantly.
 
-This result does not mean that Pandas is always faster. Polars is designed to provide larger performance benefits with larger datasets or more complicated operations. For this particular small dataset and operation, the runtime difference was too small to have practical significance.
+That does not mean Pandas is always faster. Polars is meant to help more when the data is larger or the work is more complicated. On this small job, the difference does not matter.
 
 ## Testing and Reproducibility
 
-This project includes automated tests using pytest. The tests validate the main components of the analysis:
+The tests use pytest. They check:
 
-- Loading the basketball dataset
+- Loading the dataset
 - Calculating winning percentage
-- Rejecting a row with zero games played
+- Rejecting a row with zero games
 - Dropping a row with more wins than games
-- Training and evaluating the linear regression model
-- Raising an error when a Four Factor column is missing
-- Generating the top predicted teams by year, including a request for more teams than a season contains
+- Training the linear regression and getting the error metrics
+- Raising an error if a Four Factor column is missing
+- Picking the top predicted teams by year, including when you ask for more teams than that season has
 
-The project contains nine tests, including a system/integration test that checks the workflow from model training through top-team prediction.
+There are nine tests. One of them runs from training the model through the top-team list.
 
-To run the tests locally:
+To run them:
 
 ```bash
 python -m pytest -q
 ```
 
-GitHub Actions runs those tests, plus `black --check` and `flake8`, on Python 3.11 and 3.12.
+GitHub Actions runs the tests, plus `black --check` and `flake8`, on Python 3.11 and 3.12.
 
 [![Run Tests](https://github.com/gastonrgrant/Week-2-Mini-Assignment/actions/workflows/tests.yml/badge.svg)](https://github.com/gastonrgrant/Week-2-Mini-Assignment/actions/workflows/tests.yml)
 
@@ -215,13 +216,13 @@ GitHub Actions runs those tests, plus `black --check` and `flake8`, on Python 3.
 ## Files
 
 - `First_Data_Analysis.py`: Main Python data analysis script
-- `cbb_analysis.py`: Reusable functions used by the script and the tests
-- `tests/test_cbb_analysis.py`: Unit and integration tests, including edge cases
+- `cbb_analysis.py`: Functions used by the script and the tests
+- `tests/test_cbb_analysis.py`: Tests, including the edge cases
 - `.github/workflows/tests.yml`: GitHub Actions workflow
-- `requirements.txt`: Python dependencies
+- `requirements.txt`: Python packages
 - `Dockerfile`: Container build for the analysis
-- `.flake8`: Flake8 settings aligned with Black
-- `.gitignore`: Files excluded from Git tracking
+- `.flake8`: Flake8 settings so they match Black
+- `.gitignore`: Files left out of Git
 - `archive/cbb.csv`: College basketball dataset
 - `Figure_1.png`: Actual versus predicted winning-percentage plot
 - `images/docker-build.png`: Screenshot of the Docker image build
