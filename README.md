@@ -2,7 +2,7 @@
 
 ## Overview of Project
 
-This project is a beginner-level analysis of Division I college basketball data using Python, Pandas, Matplotlib, and scikit-learn. The dataset has team stats from the 2013–2019 and 2021–2025 seasons. The 2020 season is missing because the NCAA Tournament was canceled that year due to COVID-19.
+This project is a simple analysis of Division I college basketball data using Python, Pandas, Matplotlib, and scikit-learn. The dataset has team stats from the 2013–2019 and 2021–2025 seasons. The 2020 season is missing because the NCAA Tournament was canceled that year due to COVID-19.
 
 The script loads and inspects the data, checks for missing values and duplicates, filters a couple of subsets, calculates summary statistics with `groupby()`, makes a plot, and fits a linear regression model.
 
@@ -12,7 +12,7 @@ The machine learning part of the project tries to answer this question:
 
 "How well do Dean Oliver's Four Factors of Basketball explain winning percentage in college basketball?"
 
-Dean Oliver's four factors are effective field-goal percentage, turnover rate, rebounding, and free-throw rate. Each one is tracked on offense and on defense, so there are eight inputs, not four. Defense is already part of the Four Factors.
+Dean Oliver's four factors are effective field-goal percentage, turnover rate, rebounding, and free-throw rate. Each one is tracked on offense and on defense, so there are eight inputs in total.
 
 ## Dataset
 
