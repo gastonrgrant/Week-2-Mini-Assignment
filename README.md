@@ -1,5 +1,8 @@
 # College Basketball Data Analysis
 
+## Refactoring Slogan
+Shed the old skin. Keep the same bite. Refactor your Python.
+
 ## Overview of Project
 
 This project is a simple analysis of Division I college basketball data using Python, Pandas, Matplotlib, and scikit-learn. The dataset has team stats from the 2013–2019 and 2021–2025 seasons. The 2020 season is missing because the NCAA Tournament was canceled that year due to COVID-19.
